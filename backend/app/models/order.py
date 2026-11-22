@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -6,6 +7,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.enums import OrderStatus
 
+if TYPE_CHECKING:
+    from app.models.user import User
+    from app.models.order_item import OrderItem
 
 class Order(Base):
     __tablename__ = "orders"

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Enum, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -6,6 +7,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.enums import UserRole
 
+if TYPE_CHECKING:
+    from app.models.cart_item import CartItem
+    from app.models.order import Order
 
 class User(Base):
     __tablename__ = "users"
