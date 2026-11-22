@@ -1,10 +1,8 @@
-function CartPage() {
+export default function CartPage() {
   return (
-    <main>
+    <main className="page cart-page">
       <h1>Корзина</h1>
-      <p>Здесь будут выбранные товары.</p>
+      <p>Здесь скоро будут ваши товары.</p>
     </main>
   );
 }
-
-export default CartPage;
