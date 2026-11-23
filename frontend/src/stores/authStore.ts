@@ -24,10 +24,12 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const { access_token } = await loginUser(email, password);
+          const response = await loginUser(email, password);
+          console.log("ОТВЕТ ОТ СЕРВЕРА:", response); 
+          
           set({ 
-            token: access_token, 
-            user: { id: 0, email, name: "Пользователь", role: "user" },
+            token: response.access_token, 
+            user: response.user, 
             isLoading: false 
           });
           return true;

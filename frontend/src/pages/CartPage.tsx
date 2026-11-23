@@ -1,12 +1,19 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "../stores/cartStore";
 import { useAuthStore } from "../stores/authStore";
+import { createOrder } from "../api/orders";
 
 export default function CartPage() {
   const items = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const clearLocalCart = useCartStore((state) => state.clearLocalCart);
   const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+  
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!user) {
     return (
@@ -28,6 +35,19 @@ export default function CartPage() {
   }
 
   const totalSum = items.reduce((acc, item) => acc + (Number(item.product.price) * item.quantity), 0);
+
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    setError(null);
+    try {
+      await createOrder();
+      clearLocalCart();
+      navigate("/profile");
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Ошибка оформления заказа");
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <main className="page cart-page">
@@ -71,7 +91,16 @@ export default function CartPage() {
           <span>Итого:</span>
           <strong>{totalSum.toLocaleString("ru-RU")} ₽</strong>
         </div>
-        <Link className="add-button" to="/checkout">Оформить заказ</Link>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
+          {error && <p className="form-error" style={{ margin: 0 }}>{error}</p>}
+          <button 
+            className="add-button" 
+            onClick={handleCheckout}
+            disabled={isCheckingOut}
+          >
+            {isCheckingOut ? "Оформляем..." : "Оформить заказ"}
+          </button>
+        </div>
       </div>
     </main>
   );
